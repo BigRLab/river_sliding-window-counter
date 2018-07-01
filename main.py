@@ -33,16 +33,19 @@ def run(test_df):
 
 
 
-def generate_test_data():
+def generate_test_data(X, n):
     """
-    Use pandas to generate 100 random timestamps in the last 24 hr, and use the rolling window implementation in pandas to calculate the event counts as if the stream of data were coming in.
+    Use pandas to generate n random timestamps in the last X time period, and use the rolling window implementation in pandas to calculate the event counts as if the stream of data were coming in.
+
+    Attributes:
+        X: pandas acceptable string identifier for time timedelta
+        n: integer specifying test data size
     """
 
-    lastday = pd.datetime.now()- pd.Timedelta('24H')
-    ts_by_microsec = pd.date_range(start=lastday, end=pd.datetime.now(),
+    X_dt = pd.datetime.now()- pd.Timedelta(X)
+    ts_by_microsec = pd.date_range(start=X_dt, end=pd.datetime.now(),
         freq='L')
 
-    n = 10
     df = pd.DataFrame({'time': np.random.choice(ts_by_microsec, size = n),
                         'evt': [1] * n})
     df = df.sort_values(by=['time'])
@@ -60,7 +63,7 @@ def generate_test_data():
 
 
 if __name__ == "__main__":
-    test_values = generate_test_data()
+    test_values = generate_test_data('2H', 20)
     run(test_values)
 
     # test our algo produces same result as pandas rolling window counters
